@@ -4,7 +4,7 @@ Proactive Language Agents for Real-World Planning
 </h1>
 
 <p align="center">
-  Paper •
+  <a href="https://arxiv.org/abs/2406.12639">Paper</a> •
   <a href="https://huggingface.co/datasets/magicgh/Ask-before-Plan">Data</a> •
   Environment •
   Checkpoints
@@ -135,3 +135,12 @@ python3 src/run_integral.py --base_model_name $BASE_MODEL --planner_model_name $
   - [ ] Trajectory Tuning Checkpoints
 
 ## Citation
+```
+@article{ask-before-plan,
+    author = {Xuan Zhang and Yang Deng and Zifeng Ren and See-Kiong Ng and Tat-Seng Chua},
+    journal = {ArXiv preprint},
+    title = {Ask-before-Plan: Proactive Language Agents for Real-World Planning},
+    url = {https://arxiv.org/abs/2406.12639},
+    year = {2024}
+}
+```
