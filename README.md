@@ -33,12 +33,22 @@ export OPENAI_API_KEY=<API_KEY>
 For open-source models, we utilize vllm to deploy them as OpenAI compatible servers.  
 ```bash
 # LLaMA-3-8B
-python3 -m vllm.entrypoints.openai.api_server --served-model-name "llama-3-8b-instruct" --model meta-llama/Meta-Llama-3-8B-Instruct --kv-cache-dtype fp8 --port 10086 --chat-template ./configs/chat_templates/llama-3-chat.jinja
+python3 -m vllm.entrypoints.openai.api_server \
+--served-model-name "llama-3-8b-instruct" \
+--model meta-llama/Meta-Llama-3-8B-Instruct \
+--kv-cache-dtype fp8 \
+--port 10086 \
+--chat-template ./configs/chat_templates/llama-3-chat.jinja
 ```
 
 ```bash
 # Mistral-7B
-python3 -m vllm.entrypoints.openai.api_server --served-model-name "mistral-7b-instruct" --model mistralai/Mistral-7B-Instruct-v0.2 --kv-cache-dtype fp8 --port 10087 --chat-template ./configs/chat_templates/mistral-instruct.jinja
+python3 -m vllm.entrypoints.openai.api_server \
+--served-model-name "mistral-7b-instruct" \
+--model mistralai/Mistral-7B-Instruct-v0.2 \
+--kv-cache-dtype fp8 \
+--port 10087 \
+--chat-template ./configs/chat_templates/mistral-instruct.jinja
 ```  
 
 ## Agent Inference
@@ -53,20 +63,26 @@ Here are some common arguments used in agent inference scripts:
 Note that the `--port` argument is unavailable for Environment-only, Brute-force, Greedy Search, and the Integral Framework.
 
 ### Clarification
-* Environment-only: `python3 src/clarification/environment_only.py`
+* Environment-only: `python3 src/clarification/environment_only.py [--data_split ...]`
 * Conversation-only 
   * Proactive: `export PROMPT_METHOD=proactive`
   * ProCoT: `export PROMPT_METHOD=procot`
 
   ```bash
-  python3 src/clarification/conversation_only.py --model_name gpt-3.5-turbo --prompt_method $PROMPT_METHOD
+  python3 src/clarification/conversation_only.py \
+  --model_name gpt-3.5-turbo \
+  --prompt_method $PROMPT_METHOD \
+  [--data_split ...]
   ```
 * Environment + Conversation
   * Direct (GPT-3.5): `export MODEL_NAME=gpt-3.5-turbo`
   * CEP (Mistral-7B): `export MODEL_NAME=mistral-7b-ask`
   * CEP (LLaMA-3-8B): `export MODEL_NAME=llama-3-8b-ask`
   ```bash
-  python3 src/clarification/consultation.py --model_name $MODEL_NAME --prompt_method direct
+  python3 src/clarification/consultation.py \
+  --model_name $MODEL_NAME \
+  --prompt_method direct \
+  [--data_split ...]
   ```
 
 ### Execution
@@ -100,7 +116,10 @@ Note that the `--port` argument is unavailable for Environment-only, Brute-force
       export PROMPT_METHOD=memory
       ```
   ```bash
-  python3 src/execution/navigator.py --model_name $MODEL_NAME --prompt_method $PROMPT_METHOD
+  python3 src/execution/navigator.py \
+  --model_name $MODEL_NAME \
+  --prompt_method $PROMPT_METHOD \
+  [--data_split ...]
   ```
 
 ### Planning
@@ -109,7 +128,10 @@ Note that the `--port` argument is unavailable for Environment-only, Brute-force
   ```bash
   export MODEL_NAME=gpt-3.5-turbo or mistral-7b-instruct
   export PROMPT_METHOD=direct # or cot, react, reflection
-  python3 src/planning/planner.py --model_name $MODEL_NAME --prompt_method $PROMPT_METHOD
+  python3 src/planning/planner.py \
+  --model_name $MODEL_NAME \
+  --prompt_method $PROMPT_METHOD \
+  [--data_split ...]
   ```
 ### Integral Framework
 ```bash
@@ -119,7 +141,39 @@ export PROMPT_METHOD=all
 export ASK_PORT=10086
 export TOOL_PORT=10086
 
-python3 src/run_integral.py --base_model_name $BASE_MODEL --planner_model_name $PLANNER_MODEL --prompt_method $PROMPT_METHOD --ask_port $ASK_PORT --tool_port $TOOL_PORT
+python3 src/run_integral.py \
+--base_model_name $BASE_MODEL \
+--planner_model_name $PLANNER_MODEL \
+--prompt_method $PROMPT_METHOD \
+--ask_port $ASK_PORT \
+--tool_port $TOOL_PORT \
+[--data_split ...]
+```
+
+## Evaluation
+Common arguments used in evaluation scripts:
+```bash
+--data_split # Dataset split to use, e.g., train, test
+--evaluation_dir # Directory of the inference results, e.g., ./output
+--model_name # Model name to evaluate, e.g., gpt-3.5-turbo
+--prompt_method # Prompt method to evaluate, e.g., direct
+```
+### Clarification
+To enable the GPT-4 evaluation, add the `--gpt_eval` flag.
+```bash
+python3 evaluation/clarification/eval.py \
+--gpt_eval \
+[--data_split ...]
+```
+### Execution
+```bash
+python3 evaluation/execution/eval.py \
+[--data_split ...]
+```
+### Planning
+```bash
+python3 evaluation/planning/eval.py \
+[--data_split ...]
 ```
 
 ## Release Checklist
@@ -127,7 +181,7 @@ python3 src/run_integral.py --base_model_name $BASE_MODEL --planner_model_name $
   - [x] Baselines
   - [ ] Trajectory Tuning Scripts
   - [x] CEP Framework
-  - [ ] Evaluation Scripts
+  - [x] Evaluation Scripts
 * Data
   - [x] Ask-before-Plan Dataset
   - [ ] Ask-before-Plan Environment
