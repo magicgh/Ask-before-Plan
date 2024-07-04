@@ -21,8 +21,7 @@ git clone https://github.com/magicgh/Ask-before-Plan
 cd Ask-before-Plan
 pip install -r requirements.txt
 ```
-3. Download the environment and extract into the `Ask-before-Plan` directory.
-
+3. Download the `environment.zip` and extract it into the `Ask-before-Plan` directory.
 
 ## Model Setup
 To use OpenAI models, `OPENAI_API_KEY` must be set in the environment.
@@ -185,7 +184,7 @@ python3 evaluation/planning/eval.py \
 * Data
   - [x] Ask-before-Plan Dataset
   - [x] Ask-before-Plan Environment
-  - [ ] Trajectory Tuning Dataset
+  - [x] Trajectory Tuning Dataset
   - [ ] Trajectory Tuning Checkpoints
 
 ## License
@@ -194,7 +193,7 @@ Our code is licensed under the [MIT License](./LICENSE).
 The Ask-before-plan dataset and environment are available under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
 
 ## Citation
-If you find our research helpful for your work, please ![GitHub Repo stars](https://img.shields.io/github/stars/magicgh/ask-before-plan?style=social) this repository and cite our paper:
+If you find our research helpful for your work, please [![GitHub Repo stars](https://img.shields.io/github/stars/magicgh/ask-before-plan?style=social)](https://github.com/magicgh/Ask-before-Plan) this repository and cite our paper:
 ```
 @article{ask-before-plan,
     author = {Xuan Zhang and Yang Deng and Zifeng Ren and See-Kiong Ng and Tat-Seng Chua},
