@@ -6,7 +6,7 @@ Proactive Language Agents for Real-World Planning
 <p align="center">
   <a href="https://arxiv.org/abs/2406.12639">Paper</a> •
   <a href="https://huggingface.co/datasets/magicgh/Ask-before-Plan">Data</a> •
-  Environment •
+  <a href="https://drive.google.com/file/d/1vMIhs8mpMgk33pFDv2rWg6AJNyD70Sod">Environment</a> •
   Checkpoints
 </p>
 
@@ -184,11 +184,17 @@ python3 evaluation/planning/eval.py \
   - [x] Evaluation Scripts
 * Data
   - [x] Ask-before-Plan Dataset
-  - [ ] Ask-before-Plan Environment
+  - [x] Ask-before-Plan Environment
   - [ ] Trajectory Tuning Dataset
   - [ ] Trajectory Tuning Checkpoints
 
+## License
+
+Our code is licensed under the [MIT License](./LICENSE).  
+The Ask-before-plan dataset and environment are available under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
+
 ## Citation
+If you find our research helpful for your work, please ![GitHub Repo stars](https://img.shields.io/github/stars/magicgh/ask-before-plan?style=social) this repository and cite our paper:
 ```
 @article{ask-before-plan,
     author = {Xuan Zhang and Yang Deng and Zifeng Ren and See-Kiong Ng and Tat-Seng Chua},
