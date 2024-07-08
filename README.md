@@ -50,6 +50,54 @@ python3 -m vllm.entrypoints.openai.api_server \
 --chat-template ./configs/chat_templates/mistral-instruct.jinja
 ```  
 
+## Trajectory Tuning
+Please ensure the `trajectory_tuning` folder is available in your dataset directory. 
+Otherwise, clone the dataset from the [Hugging Face Hub](https://huggingface.co/datasets/magicgh/Ask-before-Plan) into the `data` directory.
+You can also use the [conversion script](./preprocess/prepare_finetune_data.py) to convert the raw data into the supervised finetuning format.
+### Clarification
+Use the following script to finetune the LLaMA-3-8B model:
+```bash
+#!/bin/bash
+python3 src/finetune.py \
+    --data_path ./data/trajectory_tunning/clarification_train.json \
+    --output_dir ./models/llama-3-8b-ask \
+    --base_model meta-llama/Meta-Llama-3-8B-Instruct \
+    --batch_size 8 \
+    --micro_batch_size 1 
+```
+Use the following script to finetune the Mistral-7B model:
+```bash
+#!/bin/bash
+python3 src/finetune.py \
+    --data_path ./data/trajectory_tunning/clarification_train.json \
+    --output_dir ./models/mistral-7b-ask \
+    --base_model mistralai/Mistral-7B-Instruct-v0.2 \
+    --batch_size 8 \
+    --micro_batch_size 1 
+```
+### Execution
+Use the following script to finetune the LLaMA-3-8B model:
+```bash
+#!/bin/bash
+python3 src/finetune.py \
+    --data_path ./data/trajectory_tunning/execution_train.json \
+    --output_dir ./models/llama-3-8b-tool \
+    --base_model meta-llama/Meta-Llama-3-8B-Instruct \
+    --batch_size 16 \
+    --micro_batch_size 2 \
+    --warmup_steps 50 
+```
+Use the following script to finetune the Mistral-7B model:
+```bash
+#!/bin/bash
+python3 src/finetune.py \
+    --data_path ./data/trajectory_tunning/execution_train.json \
+    --output_dir ./models/mistral-7b-tool \
+    --base_model mistralai/Mistral-7B-Instruct-v0.2 \
+    --batch_size 16 \
+    --micro_batch_size 2 \
+    --warmup_steps 50 
+```
 ## Agent Inference
 Here are some common arguments used in agent inference scripts:
 ```bash
@@ -178,7 +226,7 @@ python3 evaluation/planning/eval.py \
 ## Release Checklist
 * Code
   - [x] Baselines
-  - [ ] Trajectory Tuning Scripts
+  - [x] Trajectory Tuning Scripts
   - [x] CEP Framework
   - [x] Evaluation Scripts
 * Data
