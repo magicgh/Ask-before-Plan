@@ -1,4 +1,4 @@
-import os, sys, argparse
+import os, sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -9,11 +9,6 @@ from common.prompts.ask import ask_prompts
 from common.chat import extract_binary_answer as extract_answer
 import logging 
 from filelock import FileLock
-
-from dialogue import generate_trajectories
-from langchain_community.callbacks import get_openai_callback
-from tqdm import tqdm
-from common.data import load_data, expand_task, load_results, write_results, generate_message, precheck_path
 
 logging.basicConfig(level=logging.INFO)
     
@@ -76,13 +71,62 @@ class AskAgent(Agent):
         
         return question 
 
+class ConversationOnlyAgent(AskAgent):
+    def _build_user_message(self) -> str:
+        return [
+            HumanMessage(
+                self._build_user_prompt(
+                    conversations=self.conversations
+                )
+            )
+        ]
+
+class FewShotAgent(AskAgent):
+    def _build_user_example(self) -> str:
+        return [
+            HumanMessage(self._build_custom_prompt("neg_example_user")),
+            AIMessage(self._build_custom_prompt("neg_example_agent")),
+            HumanMessage(self._build_custom_prompt("pos_example_user")),
+            AIMessage(self._build_custom_prompt("pos_example_agent")),
+        ]
+    
+    def _build_ask_example(self) -> str:
+        return [
+            HumanMessage(self._build_custom_prompt("ask_example_user")),
+            AIMessage(self._build_custom_prompt("ask_example_agent")),
+        ]
+        
+    def run(self, conversations, trajectories, reset=True) -> str:
+
+        if reset:
+            self.reset()
+
+        self.conversations = conversations
+        self.trajectories = trajectories        
+        question = None
+        for step in range(self.max_steps):
+            self.messages = self._build_system_message() + self._build_user_example() + self._build_user_message()
+            answer = self.generate()
+            clarification_need = extract_answer(answer)
+            if clarification_need:
+                self.messages += self._build_agent_message() + self._build_ask_example() + self._build_ask_message()
+                question = self.generate()
+        
+        return question 
+    
+import os
+from dialogue import generate_trajectories
+from langchain_community.callbacks import get_openai_callback
+from tqdm import tqdm
+from common.data import load_data, expand_task, load_results, write_results, generate_message, precheck_path
+import json, argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_split", type=str, default="test")
     parser.add_argument("--model_name", type=str, default="gpt-3.5-turbo")
     parser.add_argument("--output_dir", type=str, default="./output")
-    parser.add_argument("--prompt_method", type=str, default="direct", choices=["direct"])
+    parser.add_argument("--prompt_method", type=str, default="direct", choices=["direct", "few_shot", "conversation_only"])
     parser.add_argument("--start_idx", type=int, default=0)
     parser.add_argument("--end_idx", type=int, default=1000)
     parser.add_argument("--port", type=int, default=None)
@@ -97,6 +141,24 @@ if __name__ == "__main__":
             temperature=0,
             port=args.port,
         )
+    elif args.prompt_method == "conversation_only":
+        agent = ConversationOnlyAgent(
+            model_name=args.model_name,
+            max_input_tokens=4096,
+            max_new_tokens=256,
+            temperature=0,
+            port=args.port,
+            prompt_lib=ask_prompts["conversation_only"],
+        )
+    elif args.prompt_method == "few_shot":
+        agent = FewShotAgent(
+            model_name=args.model_name,
+            max_input_tokens=8192,
+            max_new_tokens=256,
+            temperature=0,
+            port=args.port,
+            prompt_lib=ask_prompts["direct"],
+        )
 
     cleaned_data = load_data(split=args.data_split, start_idx=args.start_idx, end_idx=args.end_idx)
     
@@ -108,8 +170,11 @@ if __name__ == "__main__":
                 if modified is not None:
                     messages.append(generate_message("assistant", modified["question"]))
                     messages.append(generate_message("user", modified["answer"]))
-                    
-                trajectories = generate_trajectories(current, output_format="clarification")
+                
+                if args.prompt_method == "conversation_only":
+                    trajectories = None
+                else:
+                    trajectories = generate_trajectories(current, output_format="clarification")
                 ask_results.append((modified, agent.run(messages, trajectories)))
             
             logging.info(f"Clarification generated for sample {args.start_idx + data_idx}")

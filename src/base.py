@@ -63,7 +63,7 @@ def init_model(
             openai_api_base=openai_api_base,
             model_name=model_name,
             model_kwargs={"stop": stop_words},
-        )
+        )        
     elif model_name.startswith("mistral"):
         stop_words = ["</s>"] + (stop_words or [])
         openai_api_base = f"http://localhost:{port}/v1" if port else "http://localhost:10087/v1"
@@ -75,6 +75,18 @@ def init_model(
             model_name=model_name,
             model_kwargs={"stop": stop_words},
         )
+    elif model_name.startswith("llama-2"):
+        stop_words = ["</s>"] + (stop_words or [])
+        openai_api_base = f"http://localhost:{port}/v1" if port else "http://localhost:10088/v1"
+        return ChatOpenAI(
+            temperature=temperature,
+            max_tokens=max_tokens,
+            openai_api_key="EMPTY",
+            openai_api_base=openai_api_base,
+            model_name=model_name,
+            model_kwargs={"stop": stop_words},
+        )
+        
     elif model_name.startswith("gemini"):
         return ChatGoogleGenerativeAI(
             temperature=temperature,
@@ -94,6 +106,8 @@ def init_tokenizer(model_name: str):
         return AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B-Instruct")
     elif model_name.startswith("mistral"):
         return AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
+    elif model_name.startswith("llama-2"):
+        return AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
     elif model_name.startswith("gemini"):
         return None
     else:
@@ -110,6 +124,8 @@ def check_max_input_tokens(model_name: str, max_input_tokens: int, max_new_token
         return min(max_input_tokens, 8000 - max_new_tokens)
     elif model_name.startswith("mistral"):
         return min(max_input_tokens, 32000 - max_new_tokens)
+    elif model_name.startswith("llama-2"):
+        return min(max_input_tokens, 8000 - max_new_tokens)
     elif model_name.startswith("gemini"):
         return min(max_input_tokens, 1000000 - max_new_tokens)
     else:

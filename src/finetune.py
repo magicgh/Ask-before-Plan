@@ -69,6 +69,15 @@ def train(args):
         chat_template = open(os.path.join(current_file_dir, "../configs/chat_templates/llama-3-chat.jinja")).read()
         chat_template = chat_template.replace('    ', '').replace('\n', '')
         tokenizer.chat_template = chat_template
+    
+    elif "llama-2" in args.base_model.lower():
+        learning_rate = 5e-5
+        lora_r = 8
+        lora_alpha = 16
+        lora_target_modules = ['q_proj', 'v_proj']
+        chat_template = open(os.path.join(current_file_dir, "../configs/chat_templates/llama-2-chat.jinja")).read()
+        chat_template = chat_template.replace('    ', '').replace('\n', '')
+        tokenizer.chat_template = chat_template
         
     else:
         raise ValueError(f"Unknown model {args.base_model}")
