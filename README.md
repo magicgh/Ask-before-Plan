@@ -7,7 +7,7 @@ Proactive Language Agents for Real-World Planning
   <a href="https://arxiv.org/abs/2406.12639">Paper</a> •
   <a href="https://huggingface.co/datasets/magicgh/Ask-before-Plan">Data</a> •
   <a href="https://drive.google.com/file/d/1vMIhs8mpMgk33pFDv2rWg6AJNyD70Sod">Environment</a> •
-  Checkpoints
+  <a href="https://huggingface.co/magicgh/CEP">Checkpoints</a>
 </p>
 
 ## Installation
@@ -233,7 +233,7 @@ python3 evaluation/planning/eval.py \
   - [x] Ask-before-Plan Dataset
   - [x] Ask-before-Plan Environment
   - [x] Trajectory Tuning Dataset
-  - [ ] Trajectory Tuning Checkpoints
+  - [x] Trajectory Tuning Checkpoints
 
 ## License
 
