@@ -6,7 +6,7 @@ Proactive Language Agents for Real-World Planning
 <p align="center">
   <a href="https://arxiv.org/abs/2406.12639">Paper</a> •
   <a href="https://huggingface.co/datasets/magicgh/Ask-before-Plan">Data</a> •
-  <a href="https://drive.google.com/file/d/1vMIhs8mpMgk33pFDv2rWg6AJNyD70Sod">Environment</a> •
+  <a href="https://drive.google.com/file/d/1pF1Sw6pBmq2sFkJvm-LzJOqrmfWoQgxE">Environment</a> •
   <a href="https://huggingface.co/magicgh/CEP">Checkpoints</a>
 </p>
 
